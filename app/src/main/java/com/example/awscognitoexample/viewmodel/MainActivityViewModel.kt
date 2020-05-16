@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.amazonaws.mobileconnectors.cognitoauth.Auth
 import com.amazonaws.mobileconnectors.cognitoauth.AuthUserSession
 import com.amazonaws.mobileconnectors.cognitoauth.handlers.AuthHandler
+import com.amazonaws.mobileconnectors.cognitoauth.util.JWTParser
 import com.example.awscognitoexample.R
 import org.json.JSONObject
 import java.lang.Exception
@@ -27,9 +28,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     init {
         signed.value = false
-    }
 
-    fun signInCognitoUser() {
         getApplication<Application>().let {
             auth = Auth.Builder()
                 .setAppClientId(it.getString(R.string.cognito_client_id))
@@ -38,8 +37,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 .setAuthHandler(AuthCallback(WeakReference(this)))
                 .setSignInRedirect(it.getString(R.string.app_redirect))
                 .setSignOutRedirect(it.getString(R.string.app_redirect))
-                .build().also { auth -> auth.getSession() }
+                .build()
         }
+    }
+
+    fun signInCognitoUser() {
+        auth?.getSession()
     }
 
     fun signInGoogleUser() {
@@ -71,7 +74,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         override fun onSuccess(session: AuthUserSession?) {
             session?.let {
                 Log.d(TAG, "Received access token: ${it.accessToken.jwtToken} identity token: ${it.idToken.jwtToken}")
-                val jsonObject = JSONObject(it.idToken.jwtToken)
+                val jsonObject = JWTParser.getPayload(it.idToken.jwtToken)
                 viewModel.get()?.let { viewModel ->
                     viewModel.signedUserName.value = jsonObject.optString("name")
                     viewModel.signedUserEmail.value = jsonObject.optString("email")
