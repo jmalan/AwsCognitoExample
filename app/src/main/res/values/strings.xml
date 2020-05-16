@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AwsCognitoExample</string>
+
+    <!-- Cognito pool details here -->
+    <string name="cognito_web_domain">testappjmalan.auth.eu-central-1.amazoncognito.com</string>
+    <string name="cognito_client_id">2jaqelsu5olr6lvnaa1r7rg1bg</string>
+    <string name="app_redirect">myapp://www.loginactivity.com/mainactivity</string>
+
+    <string name="sign_in">Sign in</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="sign_out">Sign out</string>
+</resources>
